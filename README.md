@@ -86,8 +86,3 @@ The backend requires responses that include `SUMMARY:` and `KEYWORDS:` blocks. T
 - ✅ CI enforces lint, typecheck, and tests before deploy
 
 Happy shipping!
-
-
-gcloud iam service-accounts keys create key.json \
-  --iam-account=github-deployer@ai-helloworld-yan.iam.gserviceaccount.com \
-  --project ai-helloworld-yan
