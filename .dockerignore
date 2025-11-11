@@ -5,3 +5,4 @@ Dockerfile
 .gitignore
 dist
 .env*
+!.env.production

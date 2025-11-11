@@ -56,10 +56,20 @@ jobs:
           echo "Checking gcloud config..."
           gcloud config list --format="text(core.project)"
 
+      - name: Create production env file
+        run: |
+          cat <<'EOF' > .env.production
+          VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
+          EOF
+
       - name: Build and push image via Cloud Build
         run: |
           gcloud builds submit --tag "$IMAGE" . \
             --region "$GCP_REGION"
+
+      - name: Remove production env file
+        if: always()
+        run: rm -f .env.production
 
       - name: Deploy to Cloud Run
         run: |
