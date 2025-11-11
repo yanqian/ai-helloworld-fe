@@ -27,6 +27,10 @@ During development you can rely on the built-in Vite proxy (no `.env` required).
 VITE_API_BASE_URL=https://staging.example.com
 ```
 
+### Production builds
+
+For Cloud Run (or any hosted build), copy `.env.production.example` to `.env.production` and set `VITE_API_BASE_URL` to the deployed backend (for example, your Cloud Run URL). The variable is baked into the bundle during `npm run build`.
+
 ## Available Scripts
 
 | Command        | Description                          |
@@ -82,3 +86,8 @@ The backend requires responses that include `SUMMARY:` and `KEYWORDS:` blocks. T
 - ✅ CI enforces lint, typecheck, and tests before deploy
 
 Happy shipping!
+
+
+gcloud iam service-accounts keys create key.json \
+  --iam-account=github-deployer@ai-helloworld-yan.iam.gserviceaccount.com \
+  --project ai-helloworld-yan
