@@ -37,6 +37,7 @@ export const SummarizerForm = ({ onSubmit, onStream, isLoading, isStreaming }: S
         label="Paragraph"
         value={text}
         onChange={(event) => setText(event.target.value)}
+        onClear={() => setText('')}
         rows={8}
         placeholder="Paste or type the text you want summarized"
         required
@@ -48,6 +49,7 @@ export const SummarizerForm = ({ onSubmit, onStream, isLoading, isStreaming }: S
         placeholder="e.g. Summarize with tone for executives"
         value={prompt}
         onChange={(event) => setPrompt(event.target.value)}
+        onClear={() => setPrompt('')}
       />
 
       <div className="flex flex-wrap gap-3">
