@@ -38,7 +38,7 @@ export const TextField = ({ label, optional, className, onClear, ...props }: Tex
             type="button"
             onClick={onClear}
             aria-label={`Clear ${label}`}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/60 px-2 py-1 text-xs font-medium text-slate-500 transition hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="absolute right-3 bottom-2 rounded-full bg-white/60 px-2 py-1 text-xs font-medium text-slate-500 transition hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/40"
           >
             Clear
           </button>
