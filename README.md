@@ -1,12 +1,13 @@
 # AI Helloworld Frontend
 
-Modern React + TypeScript UI for the `ai-helloworld` summarizer backend. It follows the Codex Specification v2 with strict typing, DI-friendly services, and complete CI coverage.
+Modern React + TypeScript UI for the `ai-helloworld` summarizer + UV advisor backend. It follows the Codex Specification v2 with strict typing, DI-friendly services, and complete CI coverage.
 
 ## Features
 
 - Input a paragraph and optional prompt override.
 - One-click sync summary with keywords.
 - Streaming mode that shows incremental summary text directly in the result panel.
+- UV advisor page that fetches Singapore UV data and produces AI-driven outfit/protection guidance.
 - Central logging + HTTP client abstraction for observability and testability.
 - Tailwind-powered responsive layout optimized for desktop + tablet.
 - Jest + Testing Library for component and hook coverage.
@@ -49,7 +50,8 @@ Key directories (see `codex-spec-v2.md` for the full spec):
 src/
 ├── components/         # Common + layout components
 ├── features/
-│   └── summarizer/     # Summarizer UI, hooks, store
+│   ├── summarizer/     # Summarizer UI, hooks, store
+│   └── uvAdvisor/      # UV planner UI, hooks, store
 ├── providers/          # DI context wiring
 ├── services/           # HTTP + logging abstractions
 ├── styles/             # Tailwind + theme tokens
@@ -70,7 +72,7 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) runs lint, tests, and build
 
 ## Backend Integration
 
-Set `VITE_API_BASE_URL` to reference the Go backend (`/api/v1/summaries` and `/api/v1/summaries/stream`). Requests inherit the backend's structured errors and propagate them to the UI with friendly messaging.
+Set `VITE_API_BASE_URL` to reference the Go backend ( `/api/v1/summaries`, `/api/v1/summaries/stream`, and `/api/v1/uv-advice`). Requests inherit the backend's structured errors and propagate them to the UI with friendly messaging.
 
 ### Prompt Overrides
 
