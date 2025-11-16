@@ -15,7 +15,7 @@ const MODES: Array<{ value: SearchMode; label: string; description: string }> = 
   {
     value: 'semantic_hash',
     label: 'Semantic hash',
-    description: 'SimHash/LSH bucket lookup without pgvector.',
+    description: 'SimHash/LSH bucket lookup backed by pgvector search.',
   },
   {
     value: 'similarity',
