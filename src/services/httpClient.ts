@@ -6,6 +6,7 @@ export interface HttpClientConfig {
 }
 
 export interface HttpClient {
+  get<TResponse>(path: string, signal?: AbortSignal): Promise<TResponse>;
   post<TResponse>(path: string, body: unknown, signal?: AbortSignal): Promise<TResponse>;
   stream(
     path: string,
@@ -51,6 +52,32 @@ const buildErrorMessage = (status: number, payload?: unknown): string => {
 };
 
 export const createHttpClient = ({ baseUrl, logger }: HttpClientConfig): HttpClient => {
+  const get = async <TResponse>(path: string, signal?: AbortSignal) => {
+    const url = buildUrl(baseUrl, path);
+    try {
+      const response = await fetch(url, { method: 'GET', signal });
+
+      if (!response.ok) {
+        const errorPayload = await extractErrorPayload(response);
+        logger.log('error', 'HTTP request failed', {
+          path,
+          status: response.status,
+          errorPayload,
+        });
+
+        throw new Error(buildErrorMessage(response.status, errorPayload));
+      }
+
+      return (await response.json()) as TResponse;
+    } catch (error) {
+      logger.log('error', 'HTTP request error', {
+        path,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      });
+      throw error instanceof Error ? error : new Error('Network request failed');
+    }
+  };
+
   const post = async <TResponse>(path: string, body: unknown, signal?: AbortSignal) => {
     const url = buildUrl(baseUrl, path);
     try {
@@ -130,5 +157,5 @@ export const createHttpClient = ({ baseUrl, logger }: HttpClientConfig): HttpCli
     }
   };
 
-  return { post, stream };
+  return { get, post, stream };
 };

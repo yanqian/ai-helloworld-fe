@@ -8,6 +8,7 @@ Modern React + TypeScript UI for the `ai-helloworld` summarizer + UV advisor bac
 - One-click sync summary with keywords.
 - Streaming mode that shows incremental summary text directly in the result panel.
 - UV advisor page that fetches Singapore UV data and produces AI-driven outfit/protection guidance.
+- Smart FAQ explorer with four search strategies (exact, semantic hash, similarity, hybrid) plus live top-search recommendations backed by the backend cache.
 - Central logging + HTTP client abstraction for observability and testability.
 - Tailwind-powered responsive layout optimized for desktop + tablet.
 - Jest + Testing Library for component and hook coverage.
