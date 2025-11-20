@@ -3,6 +3,8 @@ import type { Logger } from './logger';
 export interface HttpClientConfig {
   baseUrl: string;
   logger: Logger;
+  getAuthToken?: () => string | null;
+  refreshSession?: () => Promise<boolean>;
 }
 
 export interface HttpClient {
@@ -17,6 +19,9 @@ export interface HttpClient {
 }
 
 const buildUrl = (baseUrl: string, path: string): string => {
+  if (!baseUrl) {
+    return path;
+  }
   return `${baseUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
 };
 
@@ -51,11 +56,47 @@ const buildErrorMessage = (status: number, payload?: unknown): string => {
   return `Request failed with status ${status}`;
 };
 
-export const createHttpClient = ({ baseUrl, logger }: HttpClientConfig): HttpClient => {
+const buildHeaders = (
+  base: Record<string, string>,
+  getAuthToken?: () => string | null,
+): Record<string, string> => {
+  const headers = { ...base };
+  const token = getAuthToken?.();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return headers;
+};
+
+const shouldAttemptRefresh = (status: number) => status === 401 || status === 403;
+
+export const createHttpClient = ({
+  baseUrl,
+  logger,
+  getAuthToken,
+  refreshSession,
+}: HttpClientConfig): HttpClient => {
+  const performRequest = async (makeRequest: () => Promise<Response>): Promise<Response> => {
+    let response = await makeRequest();
+    if (shouldAttemptRefresh(response.status) && refreshSession) {
+      const refreshed = await refreshSession();
+      if (refreshed) {
+        response = await makeRequest();
+      }
+    }
+    return response;
+  };
+
   const get = async <TResponse>(path: string, signal?: AbortSignal) => {
     const url = buildUrl(baseUrl, path);
     try {
-      const response = await fetch(url, { method: 'GET', signal });
+      const response = await performRequest(() =>
+        fetch(url, {
+          method: 'GET',
+          headers: buildHeaders({}, getAuthToken),
+          signal,
+        }),
+      );
 
       if (!response.ok) {
         const errorPayload = await extractErrorPayload(response);
@@ -81,12 +122,14 @@ export const createHttpClient = ({ baseUrl, logger }: HttpClientConfig): HttpCli
   const post = async <TResponse>(path: string, body: unknown, signal?: AbortSignal) => {
     const url = buildUrl(baseUrl, path);
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal,
-      });
+      const response = await performRequest(() =>
+        fetch(url, {
+          method: 'POST',
+          headers: buildHeaders({ 'Content-Type': 'application/json' }, getAuthToken),
+          body: JSON.stringify(body),
+          signal,
+        }),
+      );
 
       if (!response.ok) {
         const errorPayload = await extractErrorPayload(response);
@@ -117,12 +160,14 @@ export const createHttpClient = ({ baseUrl, logger }: HttpClientConfig): HttpCli
   ) => {
     const url = buildUrl(baseUrl, path);
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal,
-      });
+      const response = await performRequest(() =>
+        fetch(url, {
+          method: 'POST',
+          headers: buildHeaders({ 'Content-Type': 'application/json' }, getAuthToken),
+          body: JSON.stringify(body),
+          signal,
+        }),
+      );
 
       if (!response.ok || !response.body) {
         const errorPayload = !response.body ? undefined : await extractErrorPayload(response);
