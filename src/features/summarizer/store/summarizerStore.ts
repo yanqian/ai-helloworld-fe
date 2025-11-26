@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { RequestMetrics } from '@/types/metrics';
 import type { SummarizerState, SummaryResponse } from '../types';
 
 const initialState: SummarizerState = {
@@ -7,6 +8,7 @@ const initialState: SummarizerState = {
   keywords: [],
   streamingSummary: '',
   isStreaming: false,
+  metrics: undefined,
 };
 
 interface SummarizerActions {
@@ -16,19 +18,26 @@ interface SummarizerActions {
   resetStreaming: () => void;
   appendChunk: (chunk: string) => void;
   completeStreaming: (payload?: SummaryResponse) => void;
+  setMetrics: (metrics?: RequestMetrics) => void;
 }
 
 export const useSummarizerStore = create<SummarizerState & SummarizerActions>((set) => ({
   ...initialState,
-  startRequest: () => set({ isLoading: true, error: undefined }),
+  startRequest: () =>
+    set({
+      isLoading: true,
+      error: undefined,
+      metrics: undefined,
+    }),
   resolveRequest: ({ summary, keywords }) =>
     set({ isLoading: false, summary, keywords, error: undefined }),
-  failRequest: (message) => set({ isLoading: false, error: message, isStreaming: false }),
+  failRequest: (message) => set({ isLoading: false, error: message, isStreaming: false, metrics: undefined }),
   resetStreaming: () =>
     set({
       streamingSummary: '',
       isStreaming: true,
       error: undefined,
+      metrics: undefined,
     }),
   appendChunk: (chunk) =>
     set((state) => {
@@ -49,4 +58,5 @@ export const useSummarizerStore = create<SummarizerState & SummarizerActions>((s
         keywords: payload?.keywords ?? state.keywords,
       };
     }),
+  setMetrics: (metrics) => set({ metrics }),
 }));

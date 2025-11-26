@@ -8,7 +8,7 @@ import type { SearchMode, SmartFAQRequest } from './types';
 export const SmartFAQPage = () => {
   const [question, setQuestion] = useState('');
   const [mode, setMode] = useState<SearchMode>('hybrid');
-  const { search, loadRecommendations, result, isLoading, error, recommendations } = useSmartFAQ();
+  const { search, loadRecommendations, result, isLoading, error, recommendations, metrics } = useSmartFAQ();
 
   useEffect(() => {
     void loadRecommendations();
@@ -46,7 +46,7 @@ export const SmartFAQPage = () => {
         />
       </div>
 
-      <SmartFAQResult result={result} isLoading={isLoading} />
+      <SmartFAQResult result={result} isLoading={isLoading} metrics={metrics} />
     </div>
   );
 };

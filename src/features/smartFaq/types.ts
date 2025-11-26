@@ -1,3 +1,5 @@
+import type { RequestMetrics, TokenUsage } from '@/types/metrics';
+
 export type SearchMode = 'exact' | 'semantic_hash' | 'similarity' | 'hybrid';
 
 export interface SmartFAQRequest {
@@ -17,6 +19,8 @@ export interface SmartFAQResponse {
   matchedQuestion: string;
   mode: SearchMode;
   recommendations: TrendingQuery[];
+  durationMs?: number;
+  tokenUsage?: TokenUsage;
 }
 
 export interface TrendingResponse {
@@ -28,4 +32,5 @@ export interface SmartFAQState {
   isLoading: boolean;
   error?: string;
   recommendations: TrendingQuery[];
+  metrics?: RequestMetrics;
 }

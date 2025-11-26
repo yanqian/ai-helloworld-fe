@@ -12,6 +12,7 @@ export const SummarizerPage = () => {
     error,
     isStreaming,
     streamingSummary,
+    metrics,
   } = useSummarizer();
 
   return (
@@ -37,6 +38,8 @@ export const SummarizerPage = () => {
         keywords={keywords}
         streamingSummary={streamingSummary}
         isStreaming={isStreaming}
+        isLoading={isLoading}
+        metrics={metrics}
       />
     </div>
   );

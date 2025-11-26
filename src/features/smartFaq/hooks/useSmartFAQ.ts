@@ -9,8 +9,18 @@ export const useSmartFAQ = () => {
   const api = useMemo(() => createSmartFAQApi(httpClient), [httpClient]);
   const abortRef = useRef<AbortController | null>(null);
 
-  const { result, isLoading, error, recommendations, startRequest, resolve, fail, setRecommendations } =
-    useSmartFAQStore();
+  const {
+    result,
+    isLoading,
+    error,
+    recommendations,
+    metrics,
+    startRequest,
+    resolve,
+    fail,
+    setRecommendations,
+    setMetrics,
+  } = useSmartFAQStore();
 
   const cancelOngoing = useCallback(() => {
     abortRef.current?.abort();
@@ -21,16 +31,21 @@ export const useSmartFAQ = () => {
       cancelOngoing();
       const controller = new AbortController();
       abortRef.current = controller;
+      const started = performance.now();
 
       startRequest();
       try {
         const response = await api.search(payload, controller.signal);
+        setMetrics({
+          durationMs: Math.round(performance.now() - started),
+          tokenUsage: response.tokenUsage,
+        });
         resolve(response);
       } catch (requestError) {
         fail((requestError as Error).message);
       }
     },
-    [api, cancelOngoing, fail, resolve, startRequest],
+    [api, cancelOngoing, fail, resolve, setMetrics, startRequest],
   );
 
   const loadRecommendations = useCallback(async () => {
@@ -52,5 +67,6 @@ export const useSmartFAQ = () => {
     isLoading,
     error,
     recommendations,
+    metrics,
   };
 };

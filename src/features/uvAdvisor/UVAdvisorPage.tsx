@@ -3,7 +3,7 @@ import { UVAdviceResult } from './components/UVAdviceResult';
 import { useUVAdvisor } from './hooks/useUVAdvisor';
 
 export const UVAdvisorPage = () => {
-  const { fetchAdvice, advice, isLoading, error } = useUVAdvisor();
+  const { fetchAdvice, advice, isLoading, error, metrics } = useUVAdvisor();
 
   return (
     <div className="grid w-full gap-6 md:grid-cols-2">
@@ -16,7 +16,7 @@ export const UVAdvisorPage = () => {
         <UVAdvisorForm onSubmit={fetchAdvice} isLoading={isLoading} />
       </div>
 
-      <UVAdviceResult advice={advice} isLoading={isLoading} />
+      <UVAdviceResult advice={advice} isLoading={isLoading} metrics={metrics} />
     </div>
   );
 };

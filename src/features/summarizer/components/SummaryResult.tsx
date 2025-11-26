@@ -1,11 +1,23 @@
+import { RequestStats } from '@/components/common/RequestStats';
+import type { RequestMetrics } from '@/types/metrics';
+
 interface SummaryResultProps {
   summary: string;
   keywords: string[];
   streamingSummary: string;
   isStreaming: boolean;
+  isLoading: boolean;
+  metrics?: RequestMetrics;
 }
 
-export const SummaryResult = ({ summary, keywords, streamingSummary, isStreaming }: SummaryResultProps) => (
+export const SummaryResult = ({
+  summary,
+  keywords,
+  streamingSummary,
+  isStreaming,
+  isLoading,
+  metrics,
+}: SummaryResultProps) => (
   <section className="space-y-4 rounded-xl border border-border bg-white p-5 shadow-sm">
     <header>
       <p className="text-xs uppercase tracking-wide text-slate-500">Results</p>
@@ -35,5 +47,12 @@ export const SummaryResult = ({ summary, keywords, streamingSummary, isStreaming
         )}
       </article>
     </div>
+
+    <RequestStats
+      metrics={metrics}
+      isLoading={isLoading || isStreaming}
+      title="Last run"
+      className="border-dashed bg-slate-50/80"
+    />
   </section>
 );

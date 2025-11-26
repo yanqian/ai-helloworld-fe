@@ -8,17 +8,23 @@ export const useUVAdvisor = () => {
   const { httpClient, logger } = useServices();
   const api = useMemo(() => createUVAdvisorApi(httpClient), [httpClient]);
   const abortRef = useRef<AbortController | null>(null);
-  const { advice, isLoading, error, startRequest, resolve, fail } = useUVAdvisorStore();
+  const { advice, isLoading, error, metrics, startRequest, resolve, fail, setMetrics } =
+    useUVAdvisorStore();
 
   const fetchAdvice = useCallback(
     async (payload: UVAdviceRequest) => {
       abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
+      const started = performance.now();
 
       startRequest();
       try {
         const data = await api.fetchAdvice(payload, controller.signal);
+        setMetrics({
+          durationMs: Math.round(performance.now() - started),
+          tokenUsage: data.tokenUsage,
+        });
         resolve(data);
       } catch (requestError) {
         const message =
@@ -27,7 +33,7 @@ export const useUVAdvisor = () => {
         fail(message);
       }
     },
-    [api, fail, logger, resolve, startRequest],
+    [api, fail, logger, resolve, setMetrics, startRequest],
   );
 
   return {
@@ -36,5 +42,6 @@ export const useUVAdvisor = () => {
     advice,
     isLoading,
     error,
+    metrics,
   };
 };

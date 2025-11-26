@@ -23,6 +23,8 @@ export const useSummarizer = () => {
     resetStreaming,
     appendChunk,
     completeStreaming,
+    setMetrics,
+    metrics,
   } = useSummarizerStore();
 
   const cancelOngoing = useCallback(() => {
@@ -38,17 +40,22 @@ export const useSummarizer = () => {
       cancelOngoing();
       const controller = new AbortController();
       abortRef.current = controller;
+      const started = performance.now();
 
       startRequest();
 
       try {
         const data = await api.summarize(prepared, controller.signal);
+        setMetrics({
+          durationMs: Math.round(performance.now() - started),
+          tokenUsage: data.tokenUsage,
+        });
         resolveRequest(data);
       } catch (requestError) {
         failRequest((requestError as Error).message);
       }
     },
-    [api, cancelOngoing, failRequest, resolveRequest, startRequest],
+    [api, cancelOngoing, failRequest, resolveRequest, setMetrics, startRequest],
   );
 
   const streamSummary = useCallback(
@@ -62,6 +69,8 @@ export const useSummarizer = () => {
       abortRef.current = controller;
 
       resetStreaming();
+      setMetrics(undefined);
+      const started = performance.now();
 
       await api.streamSummary(
         prepared,
@@ -76,12 +85,15 @@ export const useSummarizer = () => {
             }
           },
           onError: (streamError) => failRequest(streamError.message),
-          onComplete: () => completeStreaming(),
+          onComplete: () => {
+            setMetrics({ durationMs: Math.round(performance.now() - started) });
+            completeStreaming();
+          },
         },
         controller.signal,
       );
     },
-    [abortRef, api, appendChunk, cancelOngoing, completeStreaming, failRequest, resetStreaming],
+    [abortRef, api, appendChunk, cancelOngoing, completeStreaming, failRequest, resetStreaming, setMetrics],
   );
 
   return {
@@ -94,5 +106,6 @@ export const useSummarizer = () => {
     error,
     isStreaming,
     streamingSummary,
+    metrics,
   };
 };

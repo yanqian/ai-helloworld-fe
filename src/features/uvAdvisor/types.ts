@@ -1,3 +1,5 @@
+import type { RequestMetrics, TokenUsage } from '@/types/metrics';
+
 export interface UVAdviceRequest {
   date?: string;
 }
@@ -19,10 +21,13 @@ export interface UVAdviceResponse {
   tips: string[];
   readings: UVReading[];
   dataTimestamp?: string;
+  durationMs?: number;
+  tokenUsage?: TokenUsage;
 }
 
 export interface UVAdvisorState {
   advice?: UVAdviceResponse;
   isLoading: boolean;
   error?: string;
+  metrics?: RequestMetrics;
 }

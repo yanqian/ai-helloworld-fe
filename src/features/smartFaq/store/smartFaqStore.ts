@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { RequestMetrics } from '@/types/metrics';
 import type { SmartFAQResponse, SmartFAQState, TrendingQuery } from '../types';
 
 interface Actions {
@@ -6,11 +7,13 @@ interface Actions {
   resolve: (payload: SmartFAQResponse) => void;
   fail: (message: string) => void;
   setRecommendations: (items: TrendingQuery[]) => void;
+  setMetrics: (metrics?: RequestMetrics) => void;
 }
 
 const initialState: SmartFAQState = {
   isLoading: false,
   recommendations: [],
+  metrics: undefined,
 };
 
 export const useSmartFAQStore = create<SmartFAQState & Actions>((set) => ({
@@ -20,6 +23,7 @@ export const useSmartFAQStore = create<SmartFAQState & Actions>((set) => ({
       ...state,
       isLoading: true,
       error: undefined,
+      metrics: undefined,
     })),
   resolve: (payload) =>
     set((state) => ({
@@ -34,10 +38,16 @@ export const useSmartFAQStore = create<SmartFAQState & Actions>((set) => ({
       ...state,
       isLoading: false,
       error: message,
+      metrics: undefined,
     })),
   setRecommendations: (items) =>
     set((state) => ({
       ...state,
       recommendations: items ?? state.recommendations,
+    })),
+  setMetrics: (metrics) =>
+    set((state) => ({
+      ...state,
+      metrics,
     })),
 }));

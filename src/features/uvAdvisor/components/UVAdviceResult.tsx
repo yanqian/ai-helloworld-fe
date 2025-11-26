@@ -1,8 +1,11 @@
+import { RequestStats } from '@/components/common/RequestStats';
+import type { RequestMetrics } from '@/types/metrics';
 import type { UVAdviceResponse } from '../types';
 
 interface Props {
   advice?: UVAdviceResponse;
   isLoading: boolean;
+  metrics?: RequestMetrics;
 }
 
 const categoryLabels: Record<string, string> = {
@@ -52,7 +55,7 @@ const SectionList = ({ title, items }: { title: string; items: string[] }) => (
   </article>
 );
 
-export const UVAdviceResult = ({ advice, isLoading }: Props) => {
+export const UVAdviceResult = ({ advice, isLoading, metrics }: Props) => {
   const hasAdvice = Boolean(advice);
   const category = categoryLabels[advice?.category ?? ''] ?? advice?.category ?? '—';
 
@@ -144,6 +147,8 @@ export const UVAdviceResult = ({ advice, isLoading }: Props) => {
               <p className="mt-2 text-sm text-slate-500">No hourly data available.</p>
             )}
           </article>
+
+          <RequestStats metrics={metrics} isLoading={isLoading} title="Last run" />
         </div>
       )}
     </section>
