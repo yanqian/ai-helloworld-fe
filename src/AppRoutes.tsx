@@ -4,6 +4,7 @@ import { UVAdvisorPage } from '@/features/uvAdvisor/UVAdvisorPage';
 import { SmartFAQPage } from '@/features/smartFaq/SmartFAQPage';
 import { AuthPage } from '@/features/auth/AuthPage';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
+import { UploadAskPage } from '@/features/uploadAsk/UploadAskPage';
 
 export const AppRoutes = () => (
   <Routes>
@@ -29,6 +30,14 @@ export const AppRoutes = () => (
       element={
         <ProtectedRoute>
           <SmartFAQPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/upload-ask"
+      element={
+        <ProtectedRoute>
+          <UploadAskPage />
         </ProtectedRoute>
       }
     />

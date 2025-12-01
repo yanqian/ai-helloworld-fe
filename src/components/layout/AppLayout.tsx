@@ -55,6 +55,16 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
               >
                 Smart FAQ
               </NavLink>
+              <NavLink
+                to="/upload-ask"
+                className={({ isActive }) =>
+                  `rounded-full px-4 py-2 transition ${
+                    isActive ? 'bg-primary/10 text-primary' : 'hover:text-slate-900'
+                  }`
+                }
+              >
+                Upload & Ask
+              </NavLink>
             </nav>
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
