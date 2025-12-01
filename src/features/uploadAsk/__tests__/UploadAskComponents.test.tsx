@@ -4,7 +4,7 @@ import { DocumentList } from '../components/DocumentList';
 import { AskPanel } from '../components/AskPanel';
 import { AnswerCard } from '../components/AnswerCard';
 
-const sampleDocs = [
+const sampleDocs: UploadDocument[] = [
   { id: '1', title: 'Handbook', status: 'processed', createdAt: new Date().toISOString() },
   { id: '2', title: 'Draft', status: 'processing', createdAt: new Date().toISOString() },
 ] as const;
