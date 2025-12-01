@@ -81,7 +81,8 @@ export const useUploadAskStore = create<UploadAskState & {
       logs: [
         ...state.logs,
         {
-          id: resp.sessionId,
+          id: `${resp.sessionId}-${state.logs.length + 1}`,
+          sessionId: resp.sessionId,
           queryText: state.currentQuery ?? '',
           responseText: resp.answer,
           createdAt: new Date().toISOString(),
