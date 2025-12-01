@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { DocumentList } from '../components/DocumentList';
 import { AskPanel } from '../components/AskPanel';
 import { AnswerCard } from '../components/AnswerCard';
+import type { UploadDocument } from '../types';
 
 const sampleDocs: UploadDocument[] = [
   { id: '1', title: 'Handbook', status: 'processed', createdAt: new Date().toISOString() },
