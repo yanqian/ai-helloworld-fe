@@ -6,6 +6,7 @@ interface HistoryListProps {
   logs: QueryLog[];
   sessions?: QASession[];
   selectedSessionId?: string;
+  error?: string;
   onSelectSession?: (id?: string) => void;
 }
 
@@ -15,6 +16,7 @@ export const HistoryList = ({
   logs,
   sessions = [],
   selectedSessionId,
+  error,
   onSelectSession,
 }: HistoryListProps) => {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -22,6 +24,10 @@ export const HistoryList = ({
   const toggle = (id: string) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const sortedSessions = [...sessions].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
 
   const renderResponse = (log: QueryLog) => {
     const full = log.responseText ?? '';
@@ -68,6 +74,7 @@ export const HistoryList = ({
           <h3 className="text-sm font-semibold text-slate-800">Session history</h3>
           <p className="text-xs text-slate-600">
             {sessions.length} sessions • {logs.length} entries
+            {error ? ` • ${error}` : ''}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -77,7 +84,7 @@ export const HistoryList = ({
             onChange={(e) => onSelectSession?.(e.target.value || undefined)}
           >
             <option value="">Select a session</option>
-            {sessions.map((s) => (
+            {sortedSessions.map((s) => (
               <option key={s.id} value={s.id}>
                 {sessionLabel(s)}
               </option>
@@ -85,6 +92,9 @@ export const HistoryList = ({
           </select>
         </div>
       </div>
+      <p className="text-xs text-slate-500">
+        Leave unselected to start a new session; choose an existing one to append new questions.
+      </p>
       {logs.length === 0 ? (
         <p className="text-sm text-slate-500">No history yet. Select a session or start a new one.</p>
       ) : (

@@ -46,6 +46,7 @@ export interface UploadAskState {
   isAsking: boolean;
   error?: string;
   askError?: string;
+  historyError?: string;
   answer?: string;
   sources?: ChunkSource[];
   latencyMs?: number;

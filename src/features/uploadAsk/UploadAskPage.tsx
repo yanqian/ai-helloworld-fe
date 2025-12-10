@@ -15,6 +15,7 @@ export const UploadAskPage = () => {
     isAsking,
     error,
     askError,
+    historyError,
     answer,
     sources,
     latencyMs,
@@ -36,6 +37,7 @@ export const UploadAskPage = () => {
           logs={logs}
           sessions={sessions}
           selectedSessionId={sessionId}
+          error={historyError}
           onSelectSession={selectSession}
         />
       </div>

@@ -8,12 +8,14 @@ const initialState: UploadAskState = {
   isLoadingDocs: false,
   isUploading: false,
   isAsking: false,
+  historyError: undefined,
 };
 
 export const useUploadAskStore = create<UploadAskState & {
   setDocuments: (docs: UploadDocument[]) => void;
   setSessions: (sessions: UploadAskState['sessions']) => void;
   setLogs: (logs: UploadAskState['logs']) => void;
+  setHistoryError: (message?: string) => void;
   selectSession: (sessionId?: string) => void;
   startUpload: () => void;
   failUpload: (message: string) => void;
@@ -40,6 +42,11 @@ export const useUploadAskStore = create<UploadAskState & {
       ...state,
       logs,
     })),
+  setHistoryError: (message) =>
+    set((state) => ({
+      ...state,
+      historyError: message,
+    })),
   selectSession: (sessionId) =>
     set((state) => ({
       ...state,
@@ -48,6 +55,7 @@ export const useUploadAskStore = create<UploadAskState & {
       sources: undefined,
       latencyMs: undefined,
       askError: undefined,
+      historyError: undefined,
     })),
   startUpload: () =>
     set((state) => ({

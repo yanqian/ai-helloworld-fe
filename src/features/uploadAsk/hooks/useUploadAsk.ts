@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { useServices } from '@/providers/ServiceProvider';
 import { askQuestion, fetchDocuments, fetchSessions, fetchSessionLogs, uploadDocument } from '../api';
@@ -7,6 +7,7 @@ import { useUploadAskStore } from '../store';
 export const useUploadAsk = () => {
   const { httpClient, apiBaseUrl } = useServices();
   const { token } = useAuth();
+  const logRequestSeq = useRef(0);
   const {
     documents,
     sessions,
@@ -16,11 +17,13 @@ export const useUploadAsk = () => {
     isAsking,
     error,
     askError,
+    historyError,
     answer,
     sources,
     latencyMs,
     sessionId,
     selectSession,
+    setHistoryError,
     setDocuments,
     setSessions,
     setLogs,
@@ -47,33 +50,42 @@ export const useUploadAsk = () => {
     try {
       const resp = await fetchSessions(httpClient);
       setSessions(resp.sessions ?? []);
-    } catch {
-      // ignore session errors for now
+      setHistoryError(undefined);
+    } catch (err) {
+      setHistoryError((err as Error)?.message || 'Unable to load sessions');
     }
-  }, [httpClient, setSessions]);
+  }, [httpClient, setHistoryError, setSessions]);
 
   const loadSessionLogs = useCallback(
     async (id: string) => {
+      const requestId = ++logRequestSeq.current;
       try {
         const resp = await fetchSessionLogs(httpClient, id);
-        setLogs(resp.logs ?? []);
-      } catch {
-        // ignore log errors for now
+        if (requestId === logRequestSeq.current) {
+          setHistoryError(undefined);
+          setLogs(resp.logs ?? []);
+        }
+      } catch (err) {
+        if (requestId === logRequestSeq.current) {
+          setHistoryError((err as Error)?.message || 'Unable to load session history');
+        }
       }
     },
-    [httpClient, setLogs],
+    [httpClient, setHistoryError, setLogs],
   );
 
   const handleSelectSession = useCallback(
     async (id?: string) => {
+      logRequestSeq.current += 1;
       selectSession(id);
+      setHistoryError(undefined);
       if (id) {
         await loadSessionLogs(id);
       } else {
         setLogs([]);
       }
     },
-    [loadSessionLogs, selectSession, setLogs],
+    [loadSessionLogs, selectSession, setHistoryError, setLogs],
   );
 
   const handleUpload = useCallback(
@@ -131,6 +143,7 @@ export const useUploadAsk = () => {
     isAsking,
     error,
     askError,
+    historyError,
     answer,
     sources,
     latencyMs,
