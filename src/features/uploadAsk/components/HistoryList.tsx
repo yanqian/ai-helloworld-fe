@@ -1,14 +1,22 @@
 import { useState } from 'react';
 
-import type { QueryLog } from '../types';
+import type { QASession, QueryLog } from '../types';
 
 interface HistoryListProps {
   logs: QueryLog[];
+  sessions?: QASession[];
+  selectedSessionId?: string;
+  onSelectSession?: (id?: string) => void;
 }
 
 const PREVIEW_LEN = 180;
 
-export const HistoryList = ({ logs }: HistoryListProps) => {
+export const HistoryList = ({
+  logs,
+  sessions = [],
+  selectedSessionId,
+  onSelectSession,
+}: HistoryListProps) => {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const toggle = (id: string) => {
@@ -50,14 +58,35 @@ export const HistoryList = ({ logs }: HistoryListProps) => {
     );
   };
 
+  const sessionLabel = (session: QASession) =>
+    `Session ${session.id.slice(0, 8)} • ${new Date(session.createdAt).toLocaleString()}`;
+
   return (
     <div className="space-y-2 rounded-xl border border-border bg-white p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-800">Recent questions</h3>
-        <span className="text-xs text-slate-500">{logs.length} entries</span>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-slate-800">Session history</h3>
+          <p className="text-xs text-slate-600">
+            {sessions.length} sessions • {logs.length} entries
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <select
+            className="rounded-md border border-border bg-white px-2 py-1 text-xs text-slate-700 shadow-sm"
+            value={selectedSessionId ?? ''}
+            onChange={(e) => onSelectSession?.(e.target.value || undefined)}
+          >
+            <option value="">Select a session</option>
+            {sessions.map((s) => (
+              <option key={s.id} value={s.id}>
+                {sessionLabel(s)}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       {logs.length === 0 ? (
-        <p className="text-sm text-slate-500">No history yet.</p>
+        <p className="text-sm text-slate-500">No history yet. Select a session or start a new one.</p>
       ) : (
         <ul className="space-y-2">
           {logs.slice(-5).reverse().map((log) => (

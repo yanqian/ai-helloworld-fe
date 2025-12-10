@@ -20,6 +20,7 @@ export const useUploadAsk = () => {
     sources,
     latencyMs,
     sessionId,
+    selectSession,
     setDocuments,
     setSessions,
     setLogs,
@@ -63,6 +64,18 @@ export const useUploadAsk = () => {
     [httpClient, setLogs],
   );
 
+  const handleSelectSession = useCallback(
+    async (id?: string) => {
+      selectSession(id);
+      if (id) {
+        await loadSessionLogs(id);
+      } else {
+        setLogs([]);
+      }
+    },
+    [loadSessionLogs, selectSession, setLogs],
+  );
+
   const handleUpload = useCallback(
     async (file: File, title?: string) => {
       if (!token) {
@@ -95,13 +108,13 @@ export const useUploadAsk = () => {
         resolveAsk(resp);
         if (resp.sessionId) {
           await refreshSessions();
-          await loadSessionLogs(resp.sessionId);
+          await handleSelectSession(resp.sessionId);
         }
       } catch (err) {
         failAsk((err as Error).message || 'Request failed');
       }
     },
-    [failAsk, httpClient, loadSessionLogs, refreshSessions, resolveAsk, sessionId, startAsk],
+    [failAsk, handleSelectSession, httpClient, refreshSessions, resolveAsk, sessionId, startAsk],
   );
 
   useEffect(() => {
@@ -122,6 +135,7 @@ export const useUploadAsk = () => {
     sources,
     latencyMs,
     sessionId,
+    selectSession: handleSelectSession,
     uploadDocument: handleUpload,
     askQuestion: handleAsk,
     refreshDocuments,

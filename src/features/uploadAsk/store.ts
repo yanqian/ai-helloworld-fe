@@ -14,6 +14,7 @@ export const useUploadAskStore = create<UploadAskState & {
   setDocuments: (docs: UploadDocument[]) => void;
   setSessions: (sessions: UploadAskState['sessions']) => void;
   setLogs: (logs: UploadAskState['logs']) => void;
+  selectSession: (sessionId?: string) => void;
   startUpload: () => void;
   failUpload: (message: string) => void;
   finishUpload: () => void;
@@ -38,6 +39,15 @@ export const useUploadAskStore = create<UploadAskState & {
     set((state) => ({
       ...state,
       logs,
+    })),
+  selectSession: (sessionId) =>
+    set((state) => ({
+      ...state,
+      sessionId,
+      answer: undefined,
+      sources: undefined,
+      latencyMs: undefined,
+      askError: undefined,
     })),
   startUpload: () =>
     set((state) => ({
