@@ -13,7 +13,7 @@ Frontend implementation for Google OAuth login entry and callback handling. Issu
 ## Non-Goals
 - Implementing backend OAuth logic or token storage.
 - Account linking beyond what backend provides.
-- Replacing email/password auth or changing the current session model.
+- Replacing email/password auth; Google OAuth will co-exist with the current login flow.
 
 ## Background / Context
 The frontend currently supports email/password login with tokens stored in `localStorage` via `AuthProvider`. The backend is adding Google OAuth endpoints and will initiate a redirect-based flow. The frontend must provide a UI entry point, initiate the redirect, and consume the callback to establish a local session.
