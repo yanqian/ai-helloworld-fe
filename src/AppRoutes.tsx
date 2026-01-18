@@ -3,12 +3,14 @@ import { SummarizerPage } from '@/features/summarizer/SummarizerPage';
 import { UVAdvisorPage } from '@/features/uvAdvisor/UVAdvisorPage';
 import { SmartFAQPage } from '@/features/smartFaq/SmartFAQPage';
 import { AuthPage } from '@/features/auth/AuthPage';
+import { OAuthCallbackPage } from '@/features/auth/OAuthCallbackPage';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 import { UploadAskPage } from '@/features/uploadAsk/UploadAskPage';
 
 export const AppRoutes = () => (
   <Routes>
     <Route path="/login" element={<AuthPage />} />
+    <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
     <Route
       path="/"
       element={

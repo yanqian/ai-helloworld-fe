@@ -1,5 +1,6 @@
 interface AppEnv {
   apiBaseUrl: string;
+  googleOauthEnabled: boolean;
 }
 
 const resolveBaseUrl = (): string => {
@@ -17,4 +18,5 @@ const resolveBaseUrl = (): string => {
 
 export const loadEnv = (): AppEnv => ({
   apiBaseUrl: resolveBaseUrl(),
+  googleOauthEnabled: (import.meta?.env?.VITE_GOOGLE_OAUTH_ENABLED ?? '').toString().toLowerCase() === 'true',
 });
