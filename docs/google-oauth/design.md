@@ -60,6 +60,6 @@ The frontend currently supports email/password login with tokens stored in `loca
 - Optional: component tests for rendering and feature flag behavior.
 
 ## Open Questions
-- Confirm the exact auth start endpoint path (e.g., `/auth/google/login` vs `/api/v1/auth/google/login`).
-- Confirm callback contract: tokens in query vs fragment vs one-time session code exchange.
-- Confirm the post-auth landing route and desired UX when `location.state.from` is unavailable.
+- Confirm the exact auth start endpoint path: use `/api/v1/auth/google/login`.
+- Confirm callback contract: prefer one-time `session_code` exchange; if not available, use URL fragment instead of query params.
+- Confirm the post-auth landing route (default to `/`) and desired UX when `location.state.from` is unavailable.
