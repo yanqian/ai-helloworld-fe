@@ -79,4 +79,4 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --port 8080 \
-            --set-env-vars "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}"
+            --set-env-vars "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }},VITE_GOOGLE_OAUTH_ENABLED=true"

@@ -6,3 +6,4 @@ coverage
 npm-debug.log*
 .DS_Store
 key.json
+.env.local
