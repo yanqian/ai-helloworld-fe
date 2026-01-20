@@ -1,8 +1,9 @@
 import { FormEvent, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useServices } from '@/providers/ServiceProvider';
 import { useAuth } from '@/providers/AuthProvider';
 import { createAuthApi } from './api';
+import { loadEnv } from '@/utils/env';
 
 type Mode = 'login' | 'register';
 
@@ -17,11 +18,17 @@ export const AuthPage = () => {
   const api = useMemo(() => createAuthApi(httpClient), [httpClient]);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const env = loadEnv();
 
   const [mode, setMode] = useState<Mode>('login');
   const [form, setForm] = useState(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [error, setError] = useState<string | null>(() => {
+    const state = location.state as { oauthError?: string } | null;
+    return state?.oauthError ?? null;
+  });
   const [message, setMessage] = useState<string | null>(null);
 
   const handleChange = (field: keyof typeof initialState) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,12 +61,28 @@ export const AuthPage = () => {
       }
       const response = await api.login({ email: form.email, password: form.password });
       login(response.token, response.refreshToken, response.user.email, response.user.nickname);
-      navigate('/', { replace: true });
+      const state = location.state as { from?: { pathname?: string } } | null;
+      const nextPath = state?.from?.pathname ?? '/';
+      navigate(nextPath, { replace: true });
     } catch (submitError) {
       setError((submitError as Error).message);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    setError(null);
+    setMessage(null);
+    setIsRedirecting(true);
+    const state = location.state as { from?: { pathname?: string } } | null;
+    const nextPath = state?.from?.pathname ?? '/';
+    sessionStorage.setItem('oauthReturnPath', nextPath);
+    const base = env.apiBaseUrl;
+    const loginUrl = base
+      ? `${base.replace(/\/$/, '')}/api/v1/auth/google/login`
+      : '/api/v1/auth/google/login';
+    window.location.assign(loginUrl);
   };
 
   return (
@@ -96,6 +119,24 @@ export const AuthPage = () => {
         {message && (
           <div className="mb-4 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
             {message}
+          </div>
+        )}
+
+        {env.googleOauthEnabled && (
+          <div className="mb-4 space-y-3">
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={isSubmitting || isRedirecting}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isRedirecting ? 'Redirecting to Google...' : 'Continue with Google'}
+            </button>
+            <div className="flex items-center gap-3 text-xs uppercase text-slate-400">
+              <span className="h-px flex-1 bg-slate-200" />
+              or
+              <span className="h-px flex-1 bg-slate-200" />
+            </div>
           </div>
         )}
 
