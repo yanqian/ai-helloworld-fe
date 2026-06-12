@@ -1,0 +1,68 @@
+{
+  "features": [
+    {
+      "id": "F001",
+      "title": "Frontend project recovery init",
+      "description": "Upgrade the root init.sh from harness-only verification into the frontend recovery contract for a fresh checkout.",
+      "acceptance": [
+        "Root ./init.sh still runs the AI Agent Harness verification layer.",
+        "Root ./init.sh installs or verifies npm dependencies from the lockfile.",
+        "Root ./init.sh runs TypeScript and Jest verification, and build verification when dependencies are available.",
+        "The script emits clear setup, verification, and success or failure logs and exits non-zero on failures."
+      ],
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
+      "last_error": "",
+      "priority": "P0"
+    },
+    {
+      "id": "F002",
+      "title": "Auth session contract coverage",
+      "description": "Make frontend auth storage, protected routing, refresh retry, OAuth callback, and logout behavior durably verified.",
+      "acceptance": [
+        "Protected routes redirect unauthenticated users to /login.",
+        "The HTTP client attaches bearer tokens and retries after a successful refresh.",
+        "Refresh failure clears stored auth state and returns the user to login.",
+        "Google OAuth callback handling matches the backend callback response contract."
+      ],
+      "passes": false,
+      "status": "todo",
+      "attempts": 0,
+      "last_error": "",
+      "priority": "P1"
+    },
+    {
+      "id": "F003",
+      "title": "Upload Ask UI contract coverage",
+      "description": "Add durable verification for Upload & Ask document upload, question asking, citations, and session history UI behavior.",
+      "acceptance": [
+        "Multipart upload sends Authorization and FormData without forcing JSON content headers.",
+        "Document status, failure reason, session, query log, answer, latency, and citation fields match backend JSON contracts.",
+        "Ask and history errors are surfaced without corrupting existing state.",
+        "Tests use mocked API responses and do not require a live backend by default."
+      ],
+      "passes": false,
+      "status": "todo",
+      "attempts": 0,
+      "last_error": "",
+      "priority": "P1"
+    },
+    {
+      "id": "F004",
+      "title": "Cross repository API contract alignment",
+      "description": "Keep frontend request and response types aligned with the sibling backend repository.",
+      "acceptance": [
+        "The frontend records the backend repository path and shared API surfaces in durable docs or SPEC notes.",
+        "Contract-sensitive JSON fields such as refreshToken, durationMs, tokenUsage, sessionId, and partial_summary are documented.",
+        "A verification step or fixture catches drift for routes used by the frontend.",
+        "The backend sibling repository receives matching contract notes or feature entries."
+      ],
+      "passes": false,
+      "status": "todo",
+      "attempts": 0,
+      "last_error": "",
+      "priority": "P2"
+    }
+  ]
+}
