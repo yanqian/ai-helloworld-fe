@@ -54,6 +54,7 @@ export const useUploadAskStore = create<UploadAskState & {
       answer: undefined,
       sources: undefined,
       latencyMs: undefined,
+      usedHistoryTokens: undefined,
       askError: undefined,
       historyError: undefined,
     })),
@@ -95,6 +96,7 @@ export const useUploadAskStore = create<UploadAskState & {
       answer: resp.answer,
       sources: resp.sources ?? [],
       latencyMs: resp.latencyMs,
+      usedHistoryTokens: resp.usedHistoryTokens,
       sessionId: resp.sessionId,
       logs: [
         ...state.logs,

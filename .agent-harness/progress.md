@@ -10,13 +10,15 @@ F001 is complete: root `./init.sh` now runs harness verification, verifies Node.
 
 F002 is complete: auth session contract tests now verify unauthenticated protected-route redirects, bearer-token attachment plus refresh retry in the HTTP client, refresh failure clearing stored auth state, and Google OAuth callback parsing for `token`, `refreshToken`, `email`, and `nickname` with return-path navigation.
 
+F003 is complete: Upload & Ask UI contract coverage now verifies multipart uploads send Authorization with FormData and no forced JSON content header, response types include backend document/session/history fields, store resolution preserves answer/session/latency/history-token/citation fields, and ask/history errors are surfaced without corrupting existing answer or logs.
+
 ## Last Completed Feature
 
-F002 Auth session contract coverage.
+F003 Upload Ask UI contract coverage.
 
 ## Next Feature
 
-F003 Upload Ask UI contract coverage.
+F004 Cross repository API contract alignment.
 
 ## Known Issues
 

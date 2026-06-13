@@ -42,9 +42,9 @@
         "Ask and history errors are surfaced without corrupting existing state.",
         "Tests use mocked API responses and do not require a live backend by default."
       ],
-      "passes": false,
-      "status": "todo",
-      "attempts": 0,
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
       "last_error": "",
       "priority": "P1"
     },

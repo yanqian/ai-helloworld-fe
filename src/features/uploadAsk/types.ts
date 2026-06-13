@@ -2,10 +2,13 @@ export type DocumentStatus = 'pending' | 'processing' | 'processed' | 'failed';
 
 export interface UploadDocument {
   id: string;
+  userId?: number;
   title: string;
+  source?: 'upload' | 'url';
   status: DocumentStatus;
   failureReason?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface ChunkSource {
@@ -20,10 +23,12 @@ export interface AskResponse {
   answer: string;
   sources: ChunkSource[];
   latencyMs?: number;
+  usedHistoryTokens?: number;
 }
 
 export interface QASession {
   id: string;
+  userId?: number;
   createdAt: string;
 }
 
@@ -50,6 +55,7 @@ export interface UploadAskState {
   answer?: string;
   sources?: ChunkSource[];
   latencyMs?: number;
+  usedHistoryTokens?: number;
   sessionId?: string;
   currentQuery?: string;
 }
