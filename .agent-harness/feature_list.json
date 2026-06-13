@@ -26,9 +26,9 @@
         "Refresh failure clears stored auth state and returns the user to login.",
         "Google OAuth callback handling matches the backend callback response contract."
       ],
-      "passes": false,
-      "status": "todo",
-      "attempts": 0,
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
       "last_error": "",
       "priority": "P1"
     },

@@ -8,13 +8,15 @@ The frontend minspec has been added to `.agent-harness/SPEC.md`. Feature state t
 
 F001 is complete: root `./init.sh` now runs harness verification, verifies Node.js and npm, installs dependencies with `npm ci` when `node_modules` is absent, verifies installed top-level dependencies, and runs typecheck, Jest, and production build checks.
 
+F002 is complete: auth session contract tests now verify unauthenticated protected-route redirects, bearer-token attachment plus refresh retry in the HTTP client, refresh failure clearing stored auth state, and Google OAuth callback parsing for `token`, `refreshToken`, `email`, and `nickname` with return-path navigation.
+
 ## Last Completed Feature
 
-None.
+F002 Auth session contract coverage.
 
 ## Next Feature
 
-F002 Auth session contract coverage.
+F003 Upload Ask UI contract coverage.
 
 ## Known Issues
 
