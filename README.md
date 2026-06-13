@@ -1,6 +1,6 @@
 # AI Helloworld Frontend
 
-Modern React + TypeScript UI for the `ai-helloworld` summarizer + UV advisor backend. It follows the Codex Specification v2 with strict typing, DI-friendly services, and complete CI coverage.
+Modern React + TypeScript UI for the `ai-helloworld` summarizer, UV advisor, Smart FAQ, and Upload & Ask backend. It follows the Codex Specification v2 with strict typing, DI-friendly services, and complete CI coverage.
 
 ## Features
 
@@ -9,7 +9,7 @@ Modern React + TypeScript UI for the `ai-helloworld` summarizer + UV advisor bac
 - Streaming mode that shows incremental summary text directly in the result panel.
 - UV advisor page that fetches Singapore UV data and produces AI-driven outfit/protection guidance.
 - Smart FAQ explorer with four search strategies (exact, semantic hash, similarity, hybrid) plus live top-search recommendations backed by the backend cache.
-- Upload & Ask: upload documents, run pgvector-powered similarity search, and ask questions with citation-linked answers. Citations are numbered in-line; a collapsible list lets you expand long previews and see the full source.
+- Upload & Ask: upload documents, use the backend local SQLite retrieval contract by default, and ask questions with citation-linked answers. Citations are numbered in-line; a collapsible list lets you expand long previews and see the full source.
 - Authentication page that lets users register/login with a nickname (≤10 letters), stores JWT + refresh tokens in `localStorage`, and silently refreshes access tokens in the background.
 - Central logging + HTTP client abstraction for observability and testability.
 - Tailwind-powered responsive layout optimized for desktop + tablet.
@@ -24,6 +24,8 @@ npm install
 # Start the dev server on http://localhost:5173
 npm run dev
 ```
+
+Shared frontend/backend API contract notes live in [`docs/api-contract.md`](docs/api-contract.md). The sibling backend repository is `/Users/armstrong/Project/ai-helloworld`.
 
 During development you can rely on the built-in Vite proxy (no `.env` required). The UI will call `/api/v1/...` and Vite forwards those requests to `http://localhost:8080`. If your backend lives elsewhere (e.g. a staging domain), create a `.env` file and set:
 
@@ -75,7 +77,7 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) runs lint, tests, and build
 
 ## Backend Integration
 
-Set `VITE_API_BASE_URL` to reference the Go backend (`/api/v1/auth/*`, `/api/v1/summaries`, `/api/v1/summaries/stream`, `/api/v1/uv-advice`, `/api/v1/faq/*`). The auth page registers users (email/password/nickname) and logs in to fetch both an access token and refresh token. The HTTP client automatically attaches `Authorization: Bearer <token>` to every call and, if it receives a 401/403, it exchanges the stored refresh token via `/api/v1/auth/refresh` before retrying. Requests inherit the backend's structured errors and propagate them to the UI with friendly messaging.
+Set `VITE_API_BASE_URL` to reference the Go backend (`/api/v1/auth/*`, `/api/v1/summaries`, `/api/v1/summaries/stream`, `/api/v1/uv-advice`, `/api/v1/faq/*`, `/api/v1/upload-ask/*`). The auth page registers users (email/password/nickname) and logs in to fetch both an access token and refresh token. The HTTP client automatically attaches `Authorization: Bearer <token>` to every call and, if it receives a 401/403, it exchanges the stored refresh token via `/api/v1/auth/refresh` before retrying. Requests inherit the backend's structured errors and propagate them to the UI with friendly messaging.
 
 ### Authentication UX
 
