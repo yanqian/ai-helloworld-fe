@@ -143,6 +143,116 @@ Fix the Upload & Ask question flow so a successful `/api/v1/upload-ask/qa/query`
 
 This remains one feature because it is a single UI state regression with one implementation boundary (`Upload & Ask` frontend hook/state) and one verification surface (mocked frontend tests plus recovery checks). Splitting would create entries without independent user value.
 
+## CI Deployment Trigger Control
+
+### Goal
+
+Keep frontend CI useful for local-project verification while preventing pushes to `main` from automatically building and deploying the frontend to Google Cloud.
+
+### Scope Included
+
+- Preserve CI build verification for pushes, pull requests, and manual workflow dispatch.
+- Preserve the existing Google Cloud authentication, Cloud Build image push, and Cloud Run deployment steps as an explicit manual capability.
+- Require a `workflow_dispatch` input before the deploy job can push an image or deploy to Cloud Run.
+- Record the observed failed GitHub Actions deployment run and the new deployment policy in harness evidence.
+
+### Scope Excluded
+
+- Creating or repairing the missing Artifact Registry repository `fe-repo`.
+- Removing Google Cloud deployment support, secrets, variables, Dockerfile, or Cloud Run configuration.
+- Changing frontend application behavior, backend contracts, or runtime environment values.
+
+### Core Flows
+
+- A push to `main` runs the build job and stops without authenticating to Google Cloud, invoking Cloud Build, pushing an image, or deploying Cloud Run.
+- A pull request runs build verification and does not deploy.
+- A maintainer can still run the workflow manually and opt in to `deploy_to_gcp` to execute the preserved deployment job.
+
+### Constraints
+
+- The repository is currently treated as a local frontend project, so routine CI must not depend on cloud infrastructure existing.
+- The failed run `27531728587` showed `build` passing and `deploy` failing because Artifact Registry repository `fe-repo` was not found during image push.
+- Deployment capability should remain recoverable without reintroducing automatic push deployments.
+
+### Ambiguities Or Assumptions
+
+- Manual dispatch with an explicit boolean opt-in is the intended future deployment path if cloud deployment is needed again.
+- The `main` branch should keep receiving CI build signal even when no cloud resources are provisioned.
+
+### Required Capabilities
+
+- GitHub Actions workflow syntax that supports boolean `workflow_dispatch` inputs.
+- Existing repository secrets and variables remain sufficient for manual deployment if the Google Cloud project is restored.
+- Local verification can inspect workflow YAML and run root `./init.sh`; it does not need live GCP access.
+
+### Implementation Paths
+
+- GitHub Actions workflow: `.github/workflows/ci-cd.yml`.
+- Harness state and evidence: `.agent-harness/SPEC.md`, `.agent-harness/feature_list.json`, `.agent-harness/progress.md`, and `.agent-harness/runs/`.
+
+### Verification Surface
+
+- Inspect `.github/workflows/ci-cd.yml` to confirm `deploy` runs only for `workflow_dispatch` with `deploy_to_gcp` set to true.
+- Parse the workflow YAML locally.
+- Run root `./init.sh`.
+
+### Decomposition Decision
+
+This is one feature because it changes one CI operational policy with one implementation surface and one verification surface. It is separate from harness skill documentation because that fix affects agent workflow recovery rather than frontend deployment behavior.
+
+## Embedded Harness Skill Workflow Reference
+
+### Goal
+
+Correct the embedded AI Agent Harness skill documentation so agents can find `references/workflows.md` in hidden-layout repositories.
+
+### Scope Included
+
+- Clarify that `references/workflows.md` is resolved relative to the skill's own `SKILL.md`.
+- Name the hidden-layout embedded path `.agent-harness/skills/ai-agent-harness/references/workflows.md`.
+- Update both the embedded skill copy and its embedded template copy so future repair or template use carries the same guidance.
+
+### Scope Excluded
+
+- Changing workflow behavior, orchestrator behavior, or harness state schemas.
+- Editing the globally installed user skill outside this repository.
+- Reinstalling or upgrading the harness package.
+
+### Core Flows
+
+- An agent reads `.agent-harness/skills/ai-agent-harness/SKILL.md` and follows the correct local workflow reference path.
+- A future embedded-template consumer receives the same corrected instruction.
+
+### Constraints
+
+- Hidden layout keeps the repository-local skill copy under `.agent-harness/skills/ai-agent-harness/`, not at repository root.
+- The correction must not move files or break harness contract checks that expect the reference file to exist.
+
+### Ambiguities Or Assumptions
+
+- The requested "skill upgrade" applies to the repository-embedded skill and template copy because those are project-owned writable paths.
+- The globally installed skill may still need the same wording in a separate installation/update step outside this repository.
+
+### Required Capabilities
+
+- Text-only documentation edits inside the repository.
+- Root `./init.sh` for harness contract verification.
+
+### Implementation Paths
+
+- Embedded skill: `.agent-harness/skills/ai-agent-harness/SKILL.md`.
+- Embedded template skill: `.agent-harness/skills/ai-agent-harness/assets/template/skills/ai-agent-harness/SKILL.md`.
+- Harness state and evidence: `.agent-harness/feature_list.json`, `.agent-harness/progress.md`, and `.agent-harness/runs/`.
+
+### Verification Surface
+
+- `rg` inspection for stale ambiguous `references/workflows.md` wording.
+- Root `./init.sh` harness and project recovery verification.
+
+### Decomposition Decision
+
+This is separate from CI deployment control because it improves agent workflow guidance, not application CI behavior. It remains a single feature because both edited files are copies of the same skill instruction.
+
 ## Harness Governance
 
 ### Skill Assisted Workflow

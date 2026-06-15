@@ -5,6 +5,12 @@ on:
     branches: ['main', 'master']
   pull_request:
   workflow_dispatch:
+    inputs:
+      deploy_to_gcp:
+        description: 'Build and deploy the frontend image to Google Cloud'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -25,7 +31,7 @@ jobs:
       - run: npm run build
 
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_to_gcp == true
     needs: build
     runs-on: ubuntu-latest
     permissions:

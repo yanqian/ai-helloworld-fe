@@ -16,9 +16,13 @@ F004 is complete: frontend contract notes record the sibling backend path `/User
 
 F005 is complete: the Upload & Ask ask flow now preserves the freshly returned answer, sources, latency, and session id while refreshing sessions and session history through a non-destructive post-ask history load. Orchestrated Coding Agent and Evaluator evidence is recorded in `.agent-harness/runs/20260615T032907Z-F005-preserve-upload-ask-current-answer.md`.
 
+F006 is complete: GitHub Actions push and pull request CI now run frontend build verification without automatically authenticating to Google Cloud, pushing a Cloud Build image, or deploying Cloud Run. The GCP deployment steps remain available through manual `workflow_dispatch` with explicit `deploy_to_gcp` opt-in. Evidence is recorded in `.agent-harness/runs/20260615T075949Z-F006-manual-gcp-deployment.md`.
+
+F007 is complete: the embedded AI Agent Harness skill documentation now resolves `references/workflows.md` relative to the skill directory and names the hidden-layout embedded path. The embedded template copy has the same correction. Evidence is recorded in `.agent-harness/runs/20260615T075949Z-F007-hidden-layout-skill-workflow-reference.md`.
+
 ## Last Completed Feature
 
-F005 Preserve Upload Ask current answer after history refresh.
+F007 Clarify hidden layout skill workflow reference path.
 
 ## Next Feature
 
@@ -30,3 +34,4 @@ None.
 - Browser-level smoke tests are not yet part of the default recovery path.
 - `agent-provider.json` is configured locally for Codex-driven orchestrator work, but it remains untracked local environment configuration.
 - The sibling backend repository is `/Users/armstrong/Project/ai-helloworld`; matching contract awareness is complete in backend commit `e6d6528`.
+- Manual GCP deployment remains available, but it still requires the target Artifact Registry repository and Cloud Run resources to exist before opting in.

@@ -81,6 +81,39 @@
       "attempts": 1,
       "last_error": "",
       "priority": "P0"
+    },
+    {
+      "id": "F006",
+      "title": "Make GCP frontend deployment explicitly manual",
+      "description": "Stop routine push CI from automatically building and deploying the frontend to Google Cloud while preserving manual deployment capability.",
+      "acceptance": [
+        "Pushes to main or master still run frontend CI build verification.",
+        "Push and pull_request events do not run Google Cloud authentication, Cloud Build image push, or Cloud Run deployment steps.",
+        "The existing Google Cloud deploy steps remain available through workflow_dispatch with an explicit deploy_to_gcp opt-in.",
+        "The failed deployment run root cause and new policy are recorded in harness evidence.",
+        "Workflow YAML parses locally and root `./init.sh` passes."
+      ],
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
+      "last_error": "",
+      "priority": "P0"
+    },
+    {
+      "id": "F007",
+      "title": "Clarify hidden layout skill workflow reference path",
+      "description": "Update the embedded AI Agent Harness skill instructions so references/workflows.md is resolved relative to the skill directory in hidden layout.",
+      "acceptance": [
+        "The embedded skill no longer implies `references/workflows.md` lives at the repository root.",
+        "The hidden-layout path `.agent-harness/skills/ai-agent-harness/references/workflows.md` is documented.",
+        "The embedded template skill copy carries the same corrected guidance.",
+        "A stale wording search and root `./init.sh` pass."
+      ],
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
+      "last_error": "",
+      "priority": "P1"
     }
   ]
 }
