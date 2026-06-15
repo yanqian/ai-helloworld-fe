@@ -2,6 +2,12 @@
 
 Modern React + TypeScript UI for the `ai-helloworld` summarizer, UV advisor, Smart FAQ, and Upload & Ask backend. It follows the Codex Specification v2 with strict typing, DI-friendly services, and complete CI coverage.
 
+## Product Tour
+
+![Upload & Ask demo](docs/assets/screenshots/upload-ask.png)
+
+AI Helloworld includes authenticated summarization, UV advice, FAQ search, and document Q&A with cited answers. See the full [demo walkthrough](docs/demo.md).
+
 ## Features
 
 - Input a paragraph and optional prompt override.
