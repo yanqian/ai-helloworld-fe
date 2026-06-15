@@ -31,7 +31,7 @@ npm install
 npm run dev
 ```
 
-Shared frontend/backend API contract notes live in [`docs/api-contract.md`](docs/api-contract.md). The sibling backend repository is `/Users/armstrong/Project/ai-helloworld`.
+Shared frontend/backend API contract notes live in [`docs/api-contract.md`](docs/api-contract.md). The sibling backend repository is [yanqian/ai-helloworld](https://github.com/yanqian/ai-helloworld).
 
 During development you can rely on the built-in Vite proxy (no `.env` required). The UI will call `/api/v1/...` and Vite forwards those requests to `http://localhost:8080`. If your backend lives elsewhere (e.g. a staging domain), create a `.env` file and set:
 
