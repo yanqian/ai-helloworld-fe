@@ -120,13 +120,13 @@ export const useUploadAsk = () => {
         resolveAsk(resp);
         if (resp.sessionId) {
           await refreshSessions();
-          await handleSelectSession(resp.sessionId);
+          await loadSessionLogs(resp.sessionId);
         }
       } catch (err) {
         failAsk((err as Error).message || 'Request failed');
       }
     },
-    [failAsk, handleSelectSession, httpClient, refreshSessions, resolveAsk, sessionId, startAsk],
+    [failAsk, httpClient, loadSessionLogs, refreshSessions, resolveAsk, sessionId, startAsk],
   );
 
   useEffect(() => {

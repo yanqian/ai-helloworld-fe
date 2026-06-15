@@ -80,6 +80,69 @@ Feature count is determined by independently verifiable behavior and capability 
 - F003 covers Upload & Ask because multipart upload, citation rendering, and session history use a separate transport and state path.
 - F004 covers cross-repository API drift because backend response fields and frontend types must stay aligned.
 
+## Upload Ask Current Answer Persistence
+
+### Goal
+
+Fix the Upload & Ask question flow so a successful `/api/v1/upload-ask/qa/query` response remains visible in the current Answer panel after the app refreshes session history.
+
+### Scope Included
+
+- Preserve the current `answer`, `sources`, `latencyMs`, and selected `sessionId` immediately after a successful ask response.
+- Continue refreshing the session list and selected session history after a successful ask.
+- Keep manual session selection behavior intact: selecting a different session may clear the current answer preview and load that session's history.
+- Add regression coverage for the successful ask flow where the backend returns an answer and history refresh also succeeds.
+
+### Scope Excluded
+
+- Backend API changes, Upload & Ask retrieval quality changes, or LLM prompt changes.
+- Redesigning the Upload & Ask layout or session history UI.
+- Browser-level end-to-end smoke tests; mocked React/Jest coverage is sufficient for this bugfix.
+- Changing auth, document upload, or citation rendering contracts beyond preserving the existing returned fields.
+
+### Core Flows
+
+- A signed-in user asks a question scoped to one or more processed documents.
+- The backend returns `sessionId`, `answer`, `sources`, `latencyMs`, and optional history-token metadata.
+- The Answer panel displays the returned answer and citations immediately.
+- The frontend refreshes sessions and session logs without clearing the just-returned answer.
+- The session history panel shows the persisted query log for the same session.
+
+### Constraints
+
+- The frontend must not depend on a live backend for default verification.
+- Existing `selectSession` semantics for explicit user-driven session changes should remain unchanged.
+- Existing ask error behavior must still avoid corrupting previously visible answers and logs.
+- The implementation must stay within Upload & Ask frontend state/hook/test paths.
+
+### Ambiguities Or Assumptions
+
+- The observed bug is caused by treating post-ask history refresh like an explicit user session selection, which clears the current answer state.
+- The desired UX is that automatic post-ask session/log refresh is non-destructive to the current answer card.
+- Manual session selection can continue to clear the current answer because it represents navigating to a historical session rather than showing the freshly returned response.
+
+### Required Capabilities
+
+- Jest and React Testing Library for mocked hook/component verification.
+- Existing Upload & Ask API mocks; no live backend, credentials, or browser automation required.
+- Orchestrator/provider configuration is required for real unattended `make work`; if unavailable, it must be recorded as a capability gap before any manual fallback.
+
+### Implementation Paths
+
+- Upload & Ask hook: `src/features/uploadAsk/hooks/useUploadAsk.ts`.
+- Upload & Ask store and API contract tests: `src/features/uploadAsk/__tests__/`.
+- Harness state and run evidence: `.agent-harness/feature_list.json`, `.agent-harness/progress.md`, and `.agent-harness/runs/`.
+
+### Verification Surface
+
+- A focused Jest regression test proving `askQuestion` leaves `answer` visible after refreshing sessions and logs.
+- Existing Upload & Ask store/API/component tests.
+- `npm run typecheck`, `npm run test`, and root `./init.sh`.
+
+### Decomposition Decision
+
+This remains one feature because it is a single UI state regression with one implementation boundary (`Upload & Ask` frontend hook/state) and one verification surface (mocked frontend tests plus recovery checks). Splitting would create entries without independent user value.
+
 ## Harness Governance
 
 ### Skill Assisted Workflow

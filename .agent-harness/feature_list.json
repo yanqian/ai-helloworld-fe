@@ -63,6 +63,24 @@
       "attempts": 1,
       "last_error": "",
       "priority": "P2"
+    },
+    {
+      "id": "F005",
+      "title": "Preserve Upload Ask current answer after history refresh",
+      "description": "Fix the Upload & Ask ask flow so the returned answer remains visible in the current Answer panel while sessions and session history refresh after a successful query.",
+      "acceptance": [
+        "A successful ask response updates and preserves the current answer, sources, latency, and session id.",
+        "Post-ask session and session-log refreshes do not clear the just-returned answer.",
+        "Explicit user-driven session selection behavior remains intact.",
+        "A focused regression test covers the successful ask flow with mocked answer, session refresh, and history refresh responses.",
+        "Existing Upload & Ask API/store/component behavior continues to pass.",
+        "Frontend typecheck, Jest tests, and root `./init.sh` pass."
+      ],
+      "passes": true,
+      "status": "done",
+      "attempts": 1,
+      "last_error": "",
+      "priority": "P0"
     }
   ]
 }
